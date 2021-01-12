@@ -8,23 +8,37 @@ class FullPost extends Component {
     state ={
         loadedPost: null
     }
+    componentWillMount(){
+        this.LoadData()
+    }
+
     componentDidUpdate(){
-        if(this.props.postId) {
-            if(!this.state.loadedPost || (this.state.loadedPost && this.state.loadedPost.id !== this.props.postId)){ 
-                console.log(this.props.postId)
-                Axios.get(`/posts/${this.props.postId}`)
+        this.LoadData()
+    }
+
+
+    LoadData(){
+        if(this.props.match.params.postId) {
+            if(!this.state.loadedPost || (this.state.loadedPost && this.state.loadedPost.id !== +this.props.match.params.postId)){ 
+                //console.log(this.state.loadedPost.id, this.props.match.params.postId)
+
+                console.log("searching")
+                Axios.get(`/posts/${this.props.match.params.postId}`)
                 .then(Response => { 
                     console.log(Response) 
                     this.setState({
                         loadedPost: Response.data
                     })
+                })
+                .catch(err => {
+                    console.log(err)
                 })      
             }      
         }
     } 
 
     DeletePostHandler = () => {
-        Axios.delete(`/posts/${this.props.postId}`)
+        Axios.delete(`/posts/${this.props.match.params.postId}`)
         .then(res => {
             console.log(res)
         })
@@ -33,7 +47,7 @@ class FullPost extends Component {
 
         let post = <p style={{textAlign:"center"}}>Please select a Post!</p>
 
-        if(this.props.postId){
+        if(this.props.match.params.postId){
            post = <p style={{textAlign:"center"}}>Loading...</p>
         }
         
